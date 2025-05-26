@@ -182,6 +182,9 @@ export default function Weather() {
       setWeather(weatherData);
       setForecast(forecastData);
       setError(null);
+      // Ensure suggestions stay hidden after successful search
+      setShowSuggestions(false);
+      setSuggestions([]);
     } catch (err) {
       console.error('Error in Weather component:', err);
       const errorMessage = err instanceof Error ? err.message : ERROR_MESSAGES.GENERIC_ERROR;
@@ -242,7 +245,16 @@ export default function Weather() {
             <input
               type="text"
               value={city}
-              onChange={(e) => setCity(e.target.value)}
+              onChange={(e) => {
+                setCity(e.target.value);
+                // Only show suggestions if there's input and no weather data
+                if (e.target.value.trim().length >= MIN_SEARCH_LENGTH && !weather) {
+                  setShowSuggestions(true);
+                } else {
+                  setShowSuggestions(false);
+                  setSuggestions([]);
+                }
+              }}
               onKeyDown={handleKeyDown}
               onBlur={() => {
                 // Use setTimeout to allow click events on suggestions to fire first
