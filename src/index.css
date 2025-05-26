@@ -55,10 +55,59 @@
   }
   body {
     @apply bg-background text-foreground;
-    font-feature-settings: "rlig" 1, "calt" 1;
+    margin: 0;
+    min-height: 100vh;
+    background: 
+      radial-gradient(circle at 0% 0%, rgba(28, 91, 147, 0.8) 0%, transparent 50%),
+      radial-gradient(circle at 100% 0%, rgba(87, 39, 141, 0.8) 0%, transparent 50%),
+      radial-gradient(circle at 100% 100%, rgba(35, 116, 160, 0.8) 0%, transparent 50%),
+      radial-gradient(circle at 0% 100%, rgba(128, 58, 149, 0.8) 0%, transparent 50%),
+      linear-gradient(45deg, #1a1a2e 0%, #16213e 100%);
+    background-attachment: fixed;
+    color: white;
   }
 }
 
 #root {
   @apply min-h-screen p-8;
+  position: relative;
+  z-index: 2;
+}
+
+/* Add a subtle noise texture overlay */
+body::before {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%' height='100%' filter='url(%23noise)' opacity='0.05'/%3E%3C/svg%3E");
+  pointer-events: none;
+  opacity: 0.4;
+  z-index: 1;
+}
+
+/* Add glass effect to cards */
+.backdrop-blur-sm {
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+/* Enhance card hover effects */
+.rounded-xl {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.rounded-xl:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
+}
+
+/* Add this script to your main component or index file */
+@layer utilities {
+  .animate-gradient {
+    background-size: 200% 200%;
+    animation: gradientAnimation 15s ease infinite;
+  }
 }
