@@ -24,6 +24,6 @@ export const ERROR_MESSAGES = {
   MIN_LENGTH: `Please enter at least ${CONFIG.API.MIN_QUERY_LENGTH} characters`,
   RATE_LIMIT: 'Please wait a moment before trying again',
   NETWORK_ERROR: 'Please check your internet connection',
-  API_KEY_MISSING: 'Weather API key is not configured',
+  API_KEY_MISSING: 'Weather API key is missing. Please check environment variables.',
   VALIDATION_ERROR: 'Please enter a valid city name'
 } as const; 

@@ -114,7 +114,10 @@ const sanitizeInput = (input: string | undefined): string => {
 };
 
 const validateApiKey = (): void => {
-  if (!import.meta.env.VITE_WEATHER_API_KEY) {
+  console.log('API Key status:', import.meta.env.VITE_WEATHER_API_KEY ? 'Present' : 'Missing');
+  console.log('Environment:', import.meta.env.MODE);
+  
+  if (!import.meta.env.VITE_WEATHER_API_KEY || import.meta.env.VITE_WEATHER_API_KEY === 'undefined') {
     throw new Error(ERROR_MESSAGES.API_KEY_MISSING);
   }
 };
