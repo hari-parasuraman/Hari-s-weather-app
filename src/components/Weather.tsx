@@ -128,6 +128,7 @@ export default function Weather() {
   const handleSuggestionClick = useCallback((suggestion: CitySearchResult) => {
     setCity(`${suggestion.name}, ${suggestion.country}`);
     setShowSuggestions(false);
+    setSuggestions([]);
     void handleSearch(null, suggestion.name);
   }, []);
 
@@ -148,6 +149,8 @@ export default function Weather() {
 
     setLoading(true);
     setError(null);
+    setShowSuggestions(false);
+    setSuggestions([]);
 
     try {
       cleanup();
@@ -187,6 +190,7 @@ export default function Weather() {
       setForecast(null);
     } finally {
       setLoading(false);
+      cleanup();
     }
   };
 
@@ -240,6 +244,12 @@ export default function Weather() {
               value={city}
               onChange={(e) => setCity(e.target.value)}
               onKeyDown={handleKeyDown}
+              onBlur={() => {
+                // Use setTimeout to allow click events on suggestions to fire first
+                setTimeout(() => {
+                  setShowSuggestions(false);
+                }, 200);
+              }}
               placeholder="Enter city name..."
               className="w-full px-4 py-3 rounded-lg bg-white/10 backdrop-blur-sm border border-white/20 text-white placeholder-white/70 focus:outline-none focus:ring-2 focus:ring-primary/50 disabled:opacity-50"
               aria-label="Search for a city"
