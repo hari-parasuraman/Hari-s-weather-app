@@ -237,172 +237,182 @@ export default function Weather() {
   }, [suggestions, showSuggestions, selectedIndex, handleSuggestionClick]);
 
   return (
-    <>
-      <div className="w-full max-w-6xl mx-auto p-6 space-y-6">
-        {/* Search section */}
-        <div ref={searchContainerRef} className="relative">
-          <form onSubmit={handleSearch} className="relative">
-            <input
-              type="text"
-              value={city}
-              onChange={(e) => {
-                setCity(e.target.value);
-                // Only show suggestions if there's input and no weather data
-                if (e.target.value.trim().length >= MIN_SEARCH_LENGTH && !weather) {
-                  setShowSuggestions(true);
-                } else {
-                  setShowSuggestions(false);
-                  setSuggestions([]);
-                }
-              }}
-              onKeyDown={handleKeyDown}
-              onBlur={() => {
-                // Use setTimeout to allow click events on suggestions to fire first
-                setTimeout(() => {
-                  setShowSuggestions(false);
-                }, 200);
-              }}
-              placeholder="Enter city name..."
-              className="w-full px-4 py-3 rounded-lg bg-white/10 backdrop-blur-sm border border-white/20 text-white placeholder-white/70 focus:outline-none focus:ring-2 focus:ring-primary/50 disabled:opacity-50"
-              aria-label="Search for a city"
-              aria-expanded={showSuggestions}
-              aria-controls="city-suggestions"
-              aria-activedescendant={selectedIndex >= 0 ? `suggestion-${selectedIndex}` : undefined}
-              aria-describedby={error ? 'search-error' : undefined}
-              role="combobox"
-              autoComplete="off"
-              disabled={loading}
-            />
-            {loading && (
-              <div className="absolute right-14 top-1/2 -translate-y-1/2">
-                <div className="w-5 h-5 border-2 border-primary border-t-transparent rounded-full animate-spin" />
-              </div>
-            )}
-            <button
-              type="submit"
-              disabled={loading}
-              className="absolute right-2 top-1/2 -translate-y-1/2 px-6 py-2 bg-primary text-white rounded-lg hover:bg-primary/80 transition-colors disabled:opacity-50"
-              aria-label={loading ? 'Searching...' : 'Search for weather'}
-            >
-              Search
-            </button>
-          </form>
+    <section className="w-full max-w-6xl mx-auto space-y-6" aria-label="Weather information">
+      {/* Search section */}
+      <div ref={searchContainerRef} className="relative">
+        <form onSubmit={handleSearch} className="relative" role="search">
+          <label htmlFor="city-search" className="sr-only">Search for a city</label>
+          <input
+            id="city-search"
+            type="text"
+            value={city}
+            onChange={(e) => {
+              setCity(e.target.value);
+              if (e.target.value.trim().length >= MIN_SEARCH_LENGTH && !weather) {
+                setShowSuggestions(true);
+              } else {
+                setShowSuggestions(false);
+                setSuggestions([]);
+              }
+            }}
+            onKeyDown={handleKeyDown}
+            onBlur={() => {
+              setTimeout(() => {
+                setShowSuggestions(false);
+              }, 200);
+            }}
+            placeholder="Enter city name..."
+            className="w-full px-4 py-3 rounded-lg bg-white/10 backdrop-blur-sm border border-white/20 text-white placeholder-white/70 focus:outline-none focus:ring-2 focus:ring-primary/50 disabled:opacity-50 transition-all"
+            aria-label="Search for a city"
+            aria-expanded={showSuggestions}
+            aria-controls="city-suggestions"
+            aria-activedescendant={selectedIndex >= 0 ? `suggestion-${selectedIndex}` : undefined}
+            aria-describedby={error ? 'search-error' : undefined}
+            role="combobox"
+            aria-autocomplete="list"
+            autoComplete="off"
+            disabled={loading}
+          />
+          {loading && (
+            <div className="absolute right-14 top-1/2 -translate-y-1/2" role="status" aria-label="Loading">
+              <div className="w-5 h-5 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+              <span className="sr-only">Searching...</span>
+            </div>
+          )}
+          <button
+            type="submit"
+            disabled={loading}
+            className="absolute right-2 top-1/2 -translate-y-1/2 px-6 py-2 bg-primary text-white rounded-lg hover:bg-primary/80 transition-colors disabled:opacity-50 focus:ring-2 focus:ring-offset-2 focus:ring-primary/50"
+            aria-label={loading ? 'Searching...' : 'Search for weather'}
+          >
+            Search
+          </button>
+        </form>
 
-          {renderSuggestions}
-        </div>
-
-        {/* Loading state */}
-        {loading && (
-          <div className="animate-pulse space-y-4">
-            {/* ... existing loading state ... */}
-          </div>
-        )}
+        {renderSuggestions}
 
         {/* Error message */}
         {error && (
-          <div className="p-4 rounded-lg bg-red-500/10 text-red-500">
+          <div 
+            id="search-error"
+            role="alert"
+            className="mt-2 p-4 rounded-lg bg-red-500/10 text-red-500 animate-fade-in"
+          >
             {error}
-          </div>
-        )}
-
-        {weather && forecast && (
-          <div className="space-y-6">
-            <div className="grid gap-6 md:grid-cols-2">
-              {/* Current Weather Card */}
-              <div className="p-6 rounded-xl bg-gradient-to-br from-[#2b5876]/80 to-[#4e4376]/80 backdrop-blur-sm border border-white/10 shadow-xl hover:shadow-2xl transition-all duration-300">
-                <h2 className="text-2xl font-semibold mb-6 text-white">
-                  Current Weather in {weather.name}, {weather.sys.country}
-                </h2>
-                <div className="flex items-center gap-6 mb-6">
-                  <div className="flex items-center">
-                    <img
-                      src={weather.weather[0].icon.startsWith('//') 
-                        ? `https:${weather.weather[0].icon}`
-                        : weather.weather[0].icon}
-                      alt={weather.weather[0].description}
-                      className="w-20 h-20"
-                    />
-                    <div className="text-6xl font-bold text-white ml-4">{Math.round(weather.main.temp)}°C</div>
-                  </div>
-                  <div>
-                    <p className="text-xl capitalize text-white">{weather.weather[0].description}</p>
-                  </div>
-                </div>
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="p-3 rounded-lg bg-white/5">
-                    <p className="text-sm text-white/70">Feels like</p>
-                    <p className="text-lg font-semibold text-white">{Math.round(weather.main.feels_like)}°C</p>
-                  </div>
-                  <div className="p-3 rounded-lg bg-white/5">
-                    <p className="text-sm text-white/70">Humidity</p>
-                    <p className="text-lg font-semibold text-white">{weather.main.humidity}%</p>
-                  </div>
-                  <div className="p-3 rounded-lg bg-white/5">
-                    <p className="text-sm text-white/70">Wind Speed</p>
-                    <p className="text-lg font-semibold text-white">{weather.wind.speed} m/s</p>
-                  </div>
-                  <div className="p-3 rounded-lg bg-white/5">
-                    <p className="text-sm text-white/70">Pressure</p>
-                    <p className="text-lg font-semibold text-white">{weather.main.pressure} hPa</p>
-                  </div>
-                </div>
-              </div>
-
-              {/* 3-Day Forecast Card */}
-              {forecast && forecast.forecast?.forecastday && (
-                <div className="p-6 rounded-xl bg-gradient-to-br from-[#4e4376]/80 to-[#2b5876]/80 backdrop-blur-sm border border-white/10 shadow-xl hover:shadow-2xl transition-all duration-300">
-                  <h2 className="text-2xl font-semibold mb-6 text-white">3-Day Forecast</h2>
-                  <div className="space-y-4">
-                    {forecast.forecast.forecastday.map((day) => (
-                      <div key={day.date} className="flex items-center justify-between p-4 rounded-lg bg-white/5">
-                        <div className="flex items-center gap-4">
-                          <img
-                            src={day.day.condition.icon.startsWith('//') 
-                              ? `https:${day.day.condition.icon}`
-                              : day.day.condition.icon}
-                            alt={day.day.condition.text}
-                            className="w-12 h-12"
-                          />
-                          <div>
-                            <p className="font-medium text-white">
-                              {new Date(day.date).toLocaleDateString('en-US', {
-                                weekday: 'short',
-                                month: 'short',
-                                day: 'numeric'
-                              })}
-                            </p>
-                            <p className="text-sm text-white/70">{day.day.condition.text}</p>
-                          </div>
-                        </div>
-                        <div className="text-right">
-                          <p className="text-xl font-semibold text-white">{Math.round(day.day.avgtemp_c)}°C</p>
-                          <p className="text-sm text-white/70">
-                            H: {Math.round(day.day.maxtemp_c)}°C L: {Math.round(day.day.mintemp_c)}°C
-                          </p>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-            </div>
-
-            {/* Hourly forecast section */}
-            {forecast?.forecast?.forecastday?.[0]?.hour && (
-              <div className="p-6 rounded-xl bg-gradient-to-r from-[#2b5876]/80 via-[#4e4376]/80 to-[#2b5876]/80 backdrop-blur-sm border border-white/10 shadow-xl hover:shadow-2xl transition-all duration-300">
-                <HourlyForecast 
-                  hours={forecast.forecast.forecastday[0].hour}
-                  timezone={forecast.location?.timezone}
-                  localtime={forecast.location?.localtime}
-                  className="mt-4"
-                />
-              </div>
-            )}
           </div>
         )}
       </div>
 
+      {/* Loading state */}
+      {loading && (
+        <div className="animate-pulse space-y-4" role="status" aria-label="Loading weather information">
+          <div className="h-48 bg-white/5 rounded-xl"></div>
+          <div className="h-48 bg-white/5 rounded-xl"></div>
+          <span className="sr-only">Loading weather information...</span>
+        </div>
+      )}
+
+      {weather && forecast && (
+        <div className="space-y-6 animate-fade-in">
+          <div className="grid gap-6 md:grid-cols-2">
+            {/* Current Weather Card */}
+            <article className="p-6 rounded-xl bg-gradient-to-br from-[#2b5876]/80 to-[#4e4376]/80 backdrop-blur-sm border border-white/10 shadow-xl hover:shadow-2xl transition-all duration-300">
+              <h2 className="text-2xl font-semibold mb-6 text-white">
+                Current Weather in {weather.name}, {weather.sys.country}
+              </h2>
+              <div className="flex items-center gap-6 mb-6">
+                <div className="flex items-center">
+                  <img
+                    src={weather.weather[0].icon.startsWith('//') 
+                      ? `https:${weather.weather[0].icon}`
+                      : weather.weather[0].icon}
+                    alt={weather.weather[0].description}
+                    width="80"
+                    height="80"
+                    className="w-20 h-20"
+                  />
+                  <div className="text-6xl font-bold text-white ml-4" aria-label={`Temperature: ${Math.round(weather.main.temp)}°C`}>
+                    {Math.round(weather.main.temp)}°C
+                  </div>
+                </div>
+                <div>
+                  <p className="text-xl capitalize text-white">{weather.weather[0].description}</p>
+                </div>
+              </div>
+              <dl className="grid grid-cols-2 gap-4">
+                <div className="p-3 rounded-lg bg-white/5">
+                  <dt className="text-sm text-white/70">Feels like</dt>
+                  <dd className="text-lg font-semibold text-white">{Math.round(weather.main.feels_like)}°C</dd>
+                </div>
+                <div className="p-3 rounded-lg bg-white/5">
+                  <dt className="text-sm text-white/70">Humidity</dt>
+                  <dd className="text-lg font-semibold text-white">{weather.main.humidity}%</dd>
+                </div>
+                <div className="p-3 rounded-lg bg-white/5">
+                  <dt className="text-sm text-white/70">Wind Speed</dt>
+                  <dd className="text-lg font-semibold text-white">{weather.wind.speed} m/s</dd>
+                </div>
+                <div className="p-3 rounded-lg bg-white/5">
+                  <dt className="text-sm text-white/70">Pressure</dt>
+                  <dd className="text-lg font-semibold text-white">{weather.main.pressure} hPa</dd>
+                </div>
+              </dl>
+            </article>
+
+            {/* 3-Day Forecast Card */}
+            {forecast && forecast.forecast?.forecastday && (
+              <div className="p-6 rounded-xl bg-gradient-to-br from-[#4e4376]/80 to-[#2b5876]/80 backdrop-blur-sm border border-white/10 shadow-xl hover:shadow-2xl transition-all duration-300">
+                <h2 className="text-2xl font-semibold mb-6 text-white">3-Day Forecast</h2>
+                <div className="space-y-4">
+                  {forecast.forecast.forecastday.map((day) => (
+                    <div key={day.date} className="flex items-center justify-between p-4 rounded-lg bg-white/5">
+                      <div className="flex items-center gap-4">
+                        <img
+                          src={day.day.condition.icon.startsWith('//') 
+                            ? `https:${day.day.condition.icon}`
+                            : day.day.condition.icon}
+                          alt={day.day.condition.text}
+                          className="w-12 h-12"
+                        />
+                        <div>
+                          <p className="font-medium text-white">
+                            {new Date(day.date).toLocaleDateString('en-US', {
+                              weekday: 'short',
+                              month: 'short',
+                              day: 'numeric'
+                            })}
+                          </p>
+                          <p className="text-sm text-white/70">{day.day.condition.text}</p>
+                        </div>
+                      </div>
+                      <div className="text-right">
+                        <p className="text-xl font-semibold text-white">{Math.round(day.day.avgtemp_c)}°C</p>
+                        <p className="text-sm text-white/70">
+                          H: {Math.round(day.day.maxtemp_c)}°C L: {Math.round(day.day.mintemp_c)}°C
+                        </p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* Hourly forecast section */}
+          {forecast?.forecast?.forecastday?.[0]?.hour && (
+            <div className="p-6 rounded-xl bg-gradient-to-r from-[#2b5876]/80 via-[#4e4376]/80 to-[#2b5876]/80 backdrop-blur-sm border border-white/10 shadow-xl hover:shadow-2xl transition-all duration-300">
+              <HourlyForecast 
+                hours={forecast.forecast.forecastday[0].hour}
+                timezone={forecast.location?.timezone}
+                localtime={forecast.location?.localtime}
+                className="mt-4"
+              />
+            </div>
+          )}
+        </div>
+      )}
+
       <ApiCallCounter />
-    </>
+    </section>
   );
 } 
