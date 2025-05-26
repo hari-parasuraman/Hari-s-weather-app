@@ -1,0 +1,82 @@
+# UI Guidelines and Best Practices
+
+## Responsive Design
+- Implement responsive layouts using Tailwind's breakpoint system
+- Test across various screen sizes (mobile, tablet, desktop)
+- Use fluid typography and spacing
+- Ensure touch targets are appropriately sized for mobile
+
+## Design System
+- Use shadcn/ui components as the primary component library
+- Follow Tailwind CSS class naming conventions
+- Maintain consistent color palette defined in tailwind.config.js
+- Use CSS variables for theme values
+
+## Color Scheme and Typography
+- Define a consistent type scale using Tailwind's typography plugin
+- Use semantic color names in the theme configuration
+- Implement both light and dark mode color schemes
+- Ensure WCAG 2.1 compliant color contrast ratios
+
+## Accessibility
+- Follow WCAG 2.1 AA standards
+- Implement proper ARIA attributes
+- Ensure keyboard navigation support
+- Provide focus indicators
+- Use semantic HTML elements
+- Include alt text for images
+
+## Layout and Spacing
+- Use Tailwind's spacing scale consistently
+- Implement proper vertical rhythm
+- Maintain consistent component spacing
+- Use appropriate padding and margins for readability
+
+## Component Guidelines
+- Prefer shadcn/ui components when available
+- Maintain consistent component APIs
+- Document component props and usage
+- Include loading states
+- Implement error states
+- Add hover and focus states
+
+## Error Handling
+- Display user-friendly error messages
+- Implement form validation feedback
+- Show loading states during async operations
+- Provide recovery options for errors
+- Use toast notifications for system messages
+
+## Cross-browser Compatibility
+- Test in modern browsers (Chrome, Firefox, Safari, Edge)
+- Implement graceful degradation
+- Use autoprefixer for vendor prefixes
+- Test on both desktop and mobile browsers
+
+## Theme Support
+- Implement system-preferred color scheme detection
+- Allow manual theme switching
+- Persist theme preference
+- Use CSS variables for theme values
+- Support both light and dark modes
+
+## Animations and Interactions
+- Use CSS transitions for hover states
+- Implement loading animations
+- Add micro-interactions for better feedback
+- Keep animations subtle and purposeful
+- Respect reduced-motion preferences
+
+## Code Organization
+- Follow component-based architecture
+- Maintain consistent file structure
+- Use TypeScript for type safety
+- Document complex UI logic
+- Keep components focused and reusable
+
+## Performance
+- Lazy load images and components
+- Optimize bundle size
+- Implement code splitting
+- Use proper caching strategies
+- Monitor and optimize render performance 
